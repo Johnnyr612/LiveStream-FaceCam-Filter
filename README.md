@@ -13,4 +13,4 @@
 python -m facecam.app
 
 ## Goal
-Preview window first (Option A). Then capture in OBS and send via OBS Virtual Camera to TikTok LIVE Studio.
+Preview window first. Then capture in OBS and send via OBS Virtual Camera to TikTok LIVE Studio.
