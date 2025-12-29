@@ -41,6 +41,10 @@ def _pt(landmarks, idx: int, w: int, h: int) -> np.ndarray:
     lm = landmarks[idx]
     return np.array([lm.x * w, lm.y * h], dtype=np.float32)
 
+def _pt3(landmarks, idx: int, w: int, h: int) -> np.ndarray:
+    lm = landmarks[idx]
+    return np.array([lm.x * w, lm.y * h, lm.z], dtype=np.float32)
+
 
 def _dist(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.linalg.norm(a - b))
@@ -122,6 +126,10 @@ class FaceTracker:
             return None, {}
 
         landmarks = results.multi_face_landmarks[0].landmark
+
+        # Anchor point for puppet placement (use nose tip as stable anchor)
+        nose_xy = _pt(landmarks, LM["NOSE_TIP"], w, h)
+        anchor_xy = (int(nose_xy[0]), int(nose_xy[1]))
 
         # --- Compute raw measurements ---
         # Eye EARs
@@ -241,6 +249,8 @@ class FaceTracker:
             "mouth_ratio": mouth_ratio,
             "smile_ratio": smile_ratio,
         }
+        debug["anchor_x"] = float(anchor_xy[0])
+        debug["anchor_y"] = float(anchor_xy[1])
         return signals, debug
 
     def draw_debug(self, frame_bgr: np.ndarray, signals: FaceSignals, debug: Dict[str, float]) -> None:
